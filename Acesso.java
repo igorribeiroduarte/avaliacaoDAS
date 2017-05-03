@@ -27,8 +27,6 @@ public class Acesso {
 	
 	
 	public float calcularValor() {
-		float valorTotal = 0; 
-		
 		CalculaValor calculaValor = new CalculaValor(this);
 		
 		return calculaValor.calcular();

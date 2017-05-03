@@ -9,37 +9,40 @@ public class CalculaValor {
 	private int quantidadeMinutosQuandoOsMinutosEntradaSaoMaioresQueOsMinutosSaida;
 	private int quantidadeMinutosQuandoOsMinutosSaidaSaoMenoresQueOsMinutosEntrada;
 	private int quantidadeHorasQuandoOsMinutosSaoDiferentes;
+	private final int quantidadeHorasQuandoAsHorasSaoIguais = 0;
+	private final int quantidadeMinutosQuandoOsMinutosSaoIguais = 0;
 	
 	public CalculaValor(Acesso _acesso) {
 		this._acesso = _acesso;
+	}
+	
+	public float calculaValorTotal(final int quantidadeHoras, final int quantidadeMinutos){
+		if(quantidadeHoras >= 9)
+			return _acesso.VALOR_DIARIA;
+		else
+			return (float) (quantidadeHoras * _acesso.VALOR_HORA + 
+				Math.ceil(quantidadeMinutos / 15.0) * _acesso.VALOR_FRACAO);
 	}
 	
 	public float calcular() {
 		if (_acesso.horaSaida == _acesso.horaEntrada){
 			quantidadeMinutosQuandoAsHorasSaoIguais = _acesso.minutosSaida - _acesso.minutosEntrada;
 			
-			valorTotal += Math.ceil(quantidadeMinutosQuandoAsHorasSaoIguais / 15.0) * _acesso.VALOR_FRACAO;
+			valorTotal += calculaValorTotal(quantidadeHorasQuandoAsHorasSaoIguais, quantidadeMinutosQuandoAsHorasSaoIguais);
 		}else if (_acesso.horaSaida > _acesso.horaEntrada && _acesso.minutosEntrada == _acesso.minutosSaida){
 			quantidadeHorasQuandoOsMinutosSaoIguais = _acesso.horaSaida - _acesso.horaEntrada;
 			
-			if(quantidadeHorasQuandoOsMinutosSaoIguais >= 9)
-				return _acesso.VALOR_DIARIA;
-			
-			valorTotal += quantidadeHorasQuandoOsMinutosSaoIguais * _acesso.VALOR_HORA;
+			valorTotal += calculaValorTotal(quantidadeHorasQuandoOsMinutosSaoIguais, quantidadeMinutosQuandoOsMinutosSaoIguais);
 		}
 		else if (_acesso.horaSaida > _acesso.horaEntrada && _acesso.minutosEntrada > _acesso.minutosSaida){
 			quantidadeMinutosQuandoOsMinutosEntradaSaoMaioresQueOsMinutosSaida = _acesso.minutosSaida - _acesso.minutosEntrada;
 			
-			valorTotal += Math.ceil(quantidadeMinutosQuandoOsMinutosEntradaSaoMaioresQueOsMinutosSaida / 15.0) * _acesso.VALOR_FRACAO;
+			valorTotal += calculaValorTotal(quantidadeHorasQuandoOsMinutosSaoIguais, quantidadeMinutosQuandoOsMinutosEntradaSaoMaioresQueOsMinutosSaida);
 		}else if (_acesso.horaSaida > _acesso.horaEntrada && _acesso.minutosSaida < _acesso.minutosEntrada){
 			quantidadeMinutosQuandoOsMinutosSaidaSaoMenoresQueOsMinutosEntrada = _acesso.minutosSaida + (60 - _acesso.minutosEntrada);
 			quantidadeHorasQuandoOsMinutosSaoDiferentes = _acesso.horaSaida - _acesso.horaEntrada - 1;
 			
-			if(quantidadeHorasQuandoOsMinutosSaoDiferentes >= 9)
-				return _acesso.VALOR_DIARIA;
-			
-			valorTotal += quantidadeHorasQuandoOsMinutosSaoDiferentes * _acesso.VALOR_HORA;
-			valorTotal += Math.ceil(quantidadeMinutosQuandoOsMinutosSaidaSaoMenoresQueOsMinutosEntrada / 15.0) * _acesso.VALOR_FRACAO;
+			valorTotal += calculaValorTotal(quantidadeHorasQuandoOsMinutosSaoDiferentes, quantidadeMinutosQuandoOsMinutosSaidaSaoMenoresQueOsMinutosEntrada);
 		}
 		
 		return valorTotal;
